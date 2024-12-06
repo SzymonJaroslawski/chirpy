@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"sync/atomic"
@@ -28,31 +27,14 @@ func serve(cfg *apiConfig) {
 
 	mux.Handle("/app/", fileserverHanlder)
 
-	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
-	})
+	mux.HandleFunc("GET /api/healthz", handleHealthz)
 
 	mux.HandleFunc("GET /admin/metrics", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-
-		html := `
-    <html>
-      <body>
-        <h1>Welcome, Chirpy Admin</h1>
-        <p>Chirpy has been visited %d times!</p>
-      </body>
-    </html>
-    `
-
-		fmt.Fprintf(w, html, cfg.fileserverHits.Load())
+		handleMetrics(w, r, cfg)
 	})
 
 	mux.HandleFunc("POST /admin/reset", func(w http.ResponseWriter, r *http.Request) {
-		cfg.fileserverHits.Store(0)
-		w.WriteHeader(http.StatusOK)
+		handleReset(w, r, cfg)
 	})
 
 	srv := &http.Server{
