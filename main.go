@@ -14,8 +14,11 @@ func serve() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/app/", http.StripPrefix("/app", http.FileServer(http.Dir("./static/"))))
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+	staticDir := http.Dir("./static/")
+	fileserverHanlder := http.StripPrefix("/app", cfg.middlewareMetricsInc(http.FileServer(staticDir)))
+
+	mux.Handle("/app/", fileserverHanlder)
+
 		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
