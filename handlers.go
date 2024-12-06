@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+var PROFANE = []string{"kerfuffle", "sharbert", "fornax"}
+
 func handleMetrics(w http.ResponseWriter, r *http.Request, cfg *apiConfig) {
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
@@ -36,8 +38,9 @@ func handleReset(w http.ResponseWriter, r *http.Request, cfg *apiConfig) {
 
 func handleValidateChirp(w http.ResponseWriter, r *http.Request) {
 	type Response struct {
-		Error string `json:"error,omitempty"`
-		Valid bool   `json:"valid,omitempty"`
+		Error       string `json:"error,omitempty"`
+		CleanedBody string `json:"cleaned_body,omitempty"`
+		Valid       bool   `json:"valid,omitempty"`
 	}
 
 	type Parameters struct {
@@ -56,7 +59,8 @@ func handleValidateChirp(w http.ResponseWriter, r *http.Request) {
 	code := http.StatusOK
 
 	res := Response{
-		Valid: true,
+		Valid:       true,
+		CleanedBody: validateProfaneLogic(params.Body, PROFANE),
 	}
 
 	if len(params.Body) > 140 {
