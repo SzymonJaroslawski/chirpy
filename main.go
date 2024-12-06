@@ -37,6 +37,8 @@ func serve(cfg *apiConfig) {
 		handleReset(w, r, cfg)
 	})
 
+	mux.HandleFunc("POST /api/validate_chirp", handleValidateChirp)
+
 	srv := &http.Server{
 		Addr:    ":" + PORT,
 		Handler: mux,
