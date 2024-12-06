@@ -28,19 +28,19 @@ func serve(cfg *apiConfig) {
 
 	mux.Handle("/app/", fileserverHanlder)
 
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
 
-	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/metrics", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Hits: %d", cfg.fileserverHits.Load())
 	})
 
-	mux.HandleFunc("POST /reset", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /api/reset", func(w http.ResponseWriter, r *http.Request) {
 		cfg.fileserverHits.Store(0)
 		w.WriteHeader(http.StatusOK)
 	})
