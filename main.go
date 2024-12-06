@@ -34,13 +34,23 @@ func serve(cfg *apiConfig) {
 		w.Write([]byte("OK"))
 	})
 
-	mux.HandleFunc("GET /api/metrics", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "text/plain; charset=utf-8")
+	mux.HandleFunc("GET /admin/metrics", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Hits: %d", cfg.fileserverHits.Load())
+
+		html := `
+    <html>
+      <body>
+        <h1>Welcome, Chirpy Admin</h1>
+        <p>Chirpy has been visited %d times!</p>
+      </body>
+    </html>
+    `
+
+		fmt.Fprintf(w, html, cfg.fileserverHits.Load())
 	})
 
-	mux.HandleFunc("POST /api/reset", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /admin/reset", func(w http.ResponseWriter, r *http.Request) {
 		cfg.fileserverHits.Store(0)
 		w.WriteHeader(http.StatusOK)
 	})
