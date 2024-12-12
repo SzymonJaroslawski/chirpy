@@ -15,7 +15,7 @@ require (
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
-	golang.org/x/crypto v0.30.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 )
 
 replace github.com/SzymonJaroslawski/chirpy/internal/database v0.0.0 => ./internal/database/
